@@ -1,0 +1,53 @@
+{{ define "users/list.html" }}
+{{ template "layout/header.html" . }}
+
+{{ block "users-list-content" . }}
+<div class="container-fluid p-4 flex-grow-1">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+      <i data-lucide="users" class="me-2"></i>
+      Users
+    </h2>
+  </div>
+
+  <div class="aurora-glass p-3" style="border-radius:12px;">
+    <table class="table table-dark table-striped mb-0">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ range .users }}
+        <tr {{ if eq .ID $.currentID }}class="table-info"{{ end }}>
+          <td>{{ .Username }}</td>
+          <td>{{ .FirstName }} {{ .LastName }}</td>
+          <td>{{ .Email }}</td>
+          <td>{{ .Role }}</td>
+          <td>
+            {{ if .ActiveStatus }}
+              <span class="badge bg-success">Active</span>
+            {{ else }}
+              <span class="badge bg-secondary">Inactive</span>
+            {{ end }}
+          </td>
+        </tr>
+        {{ else }}
+        <tr class="no-data-row">
+          <td colspan="5" style="background: rgba(17,34,64,0.4); backdrop-filter: blur(8px); text-align:center;">
+            No users found.
+          </td>
+        </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ end }}
+
+{{ template "layout/footer.html" . }}
+{{ end }}

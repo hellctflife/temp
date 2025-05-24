@@ -1,0 +1,261 @@
+{{ define "layout/header.html" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .Title }} | Atomic Protocol</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --aurora-primary: #0a192f;
+      --aurora-secondary: #112240;
+      --aurora-accent: #64ffda;
+      --aurora-text: #ccd6f6;
+      --aurora-highlight: #5ccfee;
+    }
+
+    .lucide {
+      stroke: var(--aurora-highlight);
+    }
+
+    .lucide-atom {
+      stroke: var(--aurora-accent);
+    }
+
+    body {
+      background: var(--aurora-primary);
+      color: var(--aurora-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+    }
+    .sidebar {
+      width: 240px;
+      background: var(--aurora-secondary);
+      flex-shrink: 0;
+    }
+    .main-content {
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .content-wrapper {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 3rem;
+      min-height: calc(100vh - 56px - 3rem);
+    }
+
+    .aurora-card {
+      background: rgba(17,34,64,0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(100,255,218,0.3);
+      border-radius: 16px;
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.2),
+        inset 0 0 32px rgba(100, 255, 218, 0.05);
+      color: var(--aurora-text);
+    }
+
+    header.topbar {
+      background: var(--aurora-secondary);
+      padding: 0.75rem 1rem;
+      min-height: 56px;
+    }
+    header.topbar h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--aurora-accent);
+    }
+    .aurora-glass {
+      background: rgba(17, 34, 64, 0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(100, 255, 218, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      overflow: auto;
+    }
+
+    .aurora-glass table {
+      background: transparent !important;
+    }
+
+    .aurora-glass .table-striped> :not(caption)>*>* {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .aurora-glass thead {
+      background: rgba(17, 34, 64, 0.6);
+    }
+
+    .aurora-glass .no-data-row td {
+      background: rgba(17, 34, 64, 0.2);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      color: var(--aurora-text);
+    }
+
+    .aurora-footer {
+      margin-top: auto;
+      width: 100%;
+      background: rgba(17, 34, 64, 0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(100, 255, 218, 0.2);
+      padding: 1rem 0;
+      color: var(--aurora-text);
+      font-size: 0.9rem;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    #aurora-atom {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .atom-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24rem;
+      height: 24rem;
+      transform: translate(-50%, -50%);
+    }
+
+    .nucleus {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 3rem;
+      height: 3rem;
+      background: radial-gradient(circle at 35% 35%,
+        rgba(100, 255, 218, 0.8) 0%,
+        rgba(100, 255, 218, 0.5) 35%,
+        rgba(100, 255, 218, 0.3) 60%,
+        transparent 100%
+      );
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 20px 8px rgba(100, 255, 218, 0.5);
+      animation: pulse 4s ease-in-out infinite alternate;
+    }
+
+    .orbit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(100, 255, 218, 0.6);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit-glow 8s infinite alternate;
+    }
+
+    .orbit-1 { transform: translate(-50%, -50%); }
+    .orbit-2 { transform: translate(-50%, -50%) rotate(60deg); width: 85%; height: 85%; }
+    .orbit-3 { transform: translate(-50%, -50%) rotate(-60deg); width: 70%; height: 70%; }
+
+    .electron {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1rem;
+      height: 1rem;
+      background: radial-gradient(circle at 30% 30%,
+        rgba(92, 207, 238, 1) 0%,
+        rgba(92, 207, 238, 0.7) 40%,
+        rgba(92, 207, 238, 0.5) 60%,
+        transparent 100%
+      );
+      border-radius: 50%;
+      box-shadow: 0 0 15px 5px rgba(92, 207, 238, 0.5);
+      transform: translate(-50%, -50%);
+    }
+
+    .electron-1 { 
+      animation: electron-1 10s linear infinite;
+      transform-origin: 50% 50%;
+    }
+    .electron-2 { 
+      animation: electron-2 8s linear infinite;
+      transform-origin: 50% 50%;
+    }
+    .electron-3 { 
+      animation: electron-3 12s linear infinite;
+      transform-origin: 50% 50%;
+    }
+
+    @keyframes pulse {
+      0% { 
+        transform: translate(-50%, -50%) scale(0.9);
+        box-shadow: 0 0 20px 8px rgba(100, 255, 218, 0.5);
+      }
+      100% { 
+        transform: translate(-50%, -50%) scale(1.1);
+        box-shadow: 0 0 30px 12px rgba(100, 255, 218, 0.7);
+      }
+    }
+
+    @keyframes orbit-glow {
+      0% { border-color: rgba(100, 255, 218, 0.7); box-shadow: 0 0 10px 2px rgba(100, 255, 218, 0.3); }
+      50% { border-color: rgba(92, 207, 238, 0.7); box-shadow: 0 0 15px 4px rgba(92, 207, 238, 0.4); }
+      100% { border-color: rgba(100, 255, 218, 0.7); box-shadow: 0 0 10px 2px rgba(100, 255, 218, 0.3); }
+    }
+
+    @keyframes electron-1 {
+      from { transform: translate(-50%, -50%) rotate(0deg) translateX(12rem); }
+      to { transform: translate(-50%, -50%) rotate(360deg) translateX(12rem); }
+    }
+
+    @keyframes electron-2 {
+      from { transform: translate(-50%, -50%) rotate(120deg) translateX(10.2rem); }
+      to { transform: translate(-50%, -50%) rotate(480deg) translateX(10.2rem); }
+    }
+
+    @keyframes electron-3 {
+      from { transform: translate(-50%, -50%) rotate(240deg) translateX(8.4rem); }
+      to { transform: translate(-50%, -50%) rotate(600deg) translateX(8.4rem); }
+    }
+
+  </style>
+</head>
+<body class="d-flex">
+
+  {{ template "layout/sidebar.html" . }}
+  <div id="aurora-atom">
+    <div class="atom-container">
+      <div class="nucleus"></div>
+      <div class="orbit orbit-1"></div>
+      <div class="orbit orbit-2"></div>
+      <div class="orbit orbit-3"></div>
+      <div class="electron electron-1"></div>
+      <div class="electron electron-2"></div>
+      <div class="electron electron-3"></div>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <header class="topbar d-flex justify-content-between align-items-center">
+      <h1>
+        <i data-lucide="layout-dashboard" class="me-2" class="lucide-atom"></i>{{ .Title }}
+      </h1>
+      {{ if .User }}
+      <div class="d-flex align-items-center">
+        <i data-lucide="user" class="me-2"></i><span>{{ .User }}</span>
+      </div>
+      {{ end }}
+    </header>
+{{ end }}

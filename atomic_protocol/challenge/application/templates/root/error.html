@@ -1,0 +1,21 @@
+{{ define "root/error.html" }}
+{{ template "layout/header.html" . }}
+
+{{ block "error-content" . }}
+<div class="main-content w-100">
+  <div class="container-fluid p-4 d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="aurora-card p-5" style="max-width: 500px; width:100%; text-align: center;">
+      <i data-lucide="alert-triangle" class="mb-3" style="width:48px; height:48px; stroke-width:1.5;"></i>
+      <h3 class="mb-3">Oops—Something Went Wrong</h3>
+      <p class="mb-4">{{ .message }}</p>
+      <a href="javascript:window.history.back();" class="aurora-btn d-inline-flex align-items-center">
+        <i data-lucide="chevron-left" class="me-2"></i>
+        Back to Previous Page
+      </a>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ template "layout/footer.html" . }}
+{{ end }}

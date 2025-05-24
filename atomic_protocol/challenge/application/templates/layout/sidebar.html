@@ -1,0 +1,40 @@
+{{ define "layout/sidebar.html" }}
+<nav class="sidebar d-flex flex-column p-3">
+  <a href="/dashboard" class="d-flex align-items-center mb-4 text-decoration-none">
+    <i data-lucide="atom" class="me-2" style="width:28px;height:28px;"></i>
+    <span class="h5 mb-0 text-light">Atomic Protocol</span>
+  </a>
+  <ul class="nav nav-pills flex-column">
+    <li class="nav-item mb-2">
+      <a href="/dashboard" class="nav-link text-light d-flex align-items-center">
+        <i data-lucide="layout-dashboard" class="me-2"></i> Dashboard
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a href="/documents" class="nav-link text-light d-flex align-items-center">
+        <i data-lucide="file-text" class="me-2"></i> Documents
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a href="/profile" class="nav-link text-light d-flex align-items-center">
+        <i data-lucide="user" class="me-2"></i> Profile
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a href="/users" class="nav-link text-light d-flex align-items-center">
+        <i data-lucide="users" class="me-2"></i> Users
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a href="/certificates" class="nav-link text-light d-flex align-items-center">
+        <i data-lucide="shield" class="me-2"></i> Certificates
+      </a>
+    </li>
+  </ul>
+  <div class="mt-auto">
+    <a href="/logout" class="nav-link text-light d-flex align-items-center">
+      <i data-lucide="log-out" class="me-2"></i> Logout
+    </a>
+  </div>
+</nav>
+{{ end }}

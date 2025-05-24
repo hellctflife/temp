@@ -1,0 +1,125 @@
+{{ define "documents/upload.html" }}
+{{ template "layout/header.html" . }}
+
+<div class="content-wrapper p-4">
+  <div class="d-flex justify-content-center my-4">
+    <div class="aurora-card p-4" style="max-width:600px; width:100%;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0 text-light">
+          <i data-lucide="upload-cloud" class="me-2"></i>
+          Upload Document
+        </h3>
+        <a href="/documents" class="aurora-btn btn-sm d-flex align-items-center">
+          <i data-lucide="chevron-left" class="me-1"></i>
+          Back to Documents
+        </a>
+      </div>
+
+      {{ if .message }}
+        <div class="alert {{ if .error }}alert-danger{{ else }}alert-success{{ end }}" role="alert">
+          {{ .message }}
+        </div>
+      {{ end }}
+
+      <form method="POST" action="/documents/upload" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label for="title" class="form-label">Document Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            class="form-control bg-transparent text-light border-1 border-opacity-25"
+            style="border-color: rgba(100, 255, 218, 0.3); border-radius: 8px;"
+            placeholder="Enter a descriptive title"
+            required
+          >
+        </div>
+
+        <div class="mb-4">
+          <label for="classification" class="form-label">Classification</label>
+          <select
+            id="classification"
+            name="classification"
+            class="form-select bg-transparent text-light border-1 border-opacity-25"
+            style="border-color: rgba(100, 255, 218, 0.3); border-radius: 8px;"
+            required
+          >
+            <option value="PUBLIC">PUBLIC</option>
+            <option value="CONFIDENTIAL" selected>CONFIDENTIAL</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label for="file" class="form-label">Choose File (PDF only)</label>
+          <input
+            type="file"
+            id="file"
+            name="file"
+            class="form-control bg-transparent text-light border-1 border-opacity-25"
+            style="border-color: rgba(100, 255, 218, 0.3); border-radius: 8px;"
+            accept="application/pdf"
+            required
+          >
+        </div>
+
+        <button type="submit" class="aurora-btn w-100 py-2">
+          <i data-lucide="upload-cloud" class="me-2"></i>
+          Upload Document
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .aurora-btn {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(100, 255, 218, 0.1);
+    color: var(--aurora-accent);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 8px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .aurora-btn:hover {
+    background: rgba(100, 255, 218, 0.2);
+    color: var(--aurora-accent);
+    border-color: var(--aurora-accent);
+    box-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: var(--aurora-accent);
+    box-shadow: 0 0 0 0.25rem rgba(100, 255, 218, 0.25);
+    background-color: rgba(17, 34, 64, 0.4);
+  }
+  
+  .form-control::placeholder {
+    color: rgba(204, 214, 246, 0.5);
+  }
+
+  /* Custom styling for the file input */
+  input[type="file"]::file-selector-button {
+    background-color: rgba(100, 255, 218, 0.1);
+    color: var(--aurora-accent);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 6px;
+    padding: 0.375rem 0.75rem;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  input[type="file"]::file-selector-button:hover {
+    background-color: rgba(100, 255, 218, 0.2);
+    border-color: var(--aurora-accent);
+  }
+</style>
+
+{{ template "layout/footer.html" . }}
+{{ end }}

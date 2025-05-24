@@ -1,0 +1,240 @@
+{{ define "documents/list.html" }}
+{{ template "layout/header.html" . }}
+
+<div class="container-fluid p-4 flex-grow-1">
+  {{ if .message }}
+    <div class="alert {{ if .error }}alert-danger{{ else }}alert-success{{ end }} mb-4">
+      {{ .message }}
+    </div>
+  {{ end }}
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h2>
+      <i data-lucide="file-text" class="me-2"></i>
+      Your Documents
+    </h2>
+    <a href="/documents/upload" class="aurora-btn d-flex align-items-center">
+      <i data-lucide="upload-cloud" class="me-1"></i>
+      Upload Document
+    </a>
+  </div>
+
+  <div class="aurora-glass mb-4 p-3" style="border-radius:12px;">
+    <table class="table table-dark table-striped mb-0">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Created</th>
+          <th>Classification</th>
+          <th>Status</th>
+          <th>Signatures</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $docIndex, $doc := .Documents }}
+        <tr>
+          <td>{{ $doc.Title }}</td>
+          <td>{{ $doc.CreatedAt.Format "Jan 2, 2006" }}</td>
+          <td>
+            {{ if eq $doc.Classification "PUBLIC" }}
+              <span class="badge bg-info">PUBLIC</span>
+            {{ else }}
+              <span class="badge bg-warning">CONFIDENTIAL</span>
+            {{ end }}
+          </td>
+          <td>
+            {{ if eq $doc.Status "DRAFT" }}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {{ else if eq $doc.Status "SIGNED" }}
+              <span class="badge bg-success">Signed</span>
+            {{ else if eq $doc.Status "REVOKED" }}
+              <span class="badge bg-danger">Revoked</span>
+            {{ else }}
+              <span class="badge bg-secondary">Unknown</span>
+            {{ end }}
+          </td>
+          <td>
+            {{ if eq $doc.Classification "CONFIDENTIAL" }}
+              <div class="signature-details">
+                {{ if gt $doc.SignatureCount 0 }}
+                  {{ range $signerIndex, $signer := $doc.Signers }}
+                    <div class="signature-entry d-flex align-items-center mb-2">
+                      <i data-lucide="check-circle" class="text-success me-1" style="width: 16px; height: 16px;"></i>
+                      <div class="w-100">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <strong class="d-block" style="font-size: 0.85rem;">{{ $signer.Username }}</strong>
+                          <button class="btn btn-sm btn-outline-info py-0 px-2 toggle-signature" 
+                                  data-signature-id="sig-{{ $signer.UserID }}-{{ $doc.ID }}" style="font-size: 0.7rem;">
+                            Show Sig
+                          </button>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.75rem;">{{ $signer.SignedAt.Format "Jan 2, 2006 15:04" }}</small>
+
+                        <div id="sig-{{ $signer.UserID }}-{{ $doc.ID }}" class="signature-block mt-1" style="display:none;">
+                          <div class="aurora-glass p-2 mt-1" style="font-family: monospace; font-size: 0.65rem; max-height: 100px; overflow-y: auto; word-break: break-all; background: rgba(10, 25, 47, 0.7);">
+                            {{ $signer.RawSignature }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {{ end }}
+                {{ else }}
+                  <span class="badge bg-secondary">No signatures</span>
+                {{ end }}
+              </div>
+            {{ else }}
+              <div class="d-flex align-items-center gap-2">
+                <div class="progress bg-dark" style="height: 8px; width: 60px;">
+                  {{ if eq $doc.SignatureCount 0 }}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                  {{ else if eq $doc.SignatureCount $doc.RequiredSignatures }}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                  {{ else }}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 50%"></div>
+                  {{ end }}
+                </div>
+                <span class="badge bg-primary">{{ $doc.SignatureCount }} / {{ $doc.RequiredSignatures }}</span>
+                {{ if gt $doc.SignatureCount 0 }}
+                  <div class="dropdown">
+                    <button class="btn btn-link btn-sm p-0 ms-1 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i data-lucide="info" style="width: 14px; height: 14px;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                      {{ range $signerIndex, $signer := $doc.Signers }}
+                      <li class="px-2 py-1">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <span>{{ $signer.Username }}</span>
+                          <button class="btn btn-sm btn-outline-info py-0 px-2 toggle-signature" 
+                                  data-signature-id="sig-{{ $signer.UserID }}-{{ $doc.ID }}" style="font-size: 0.7rem;">
+                            Show Sig
+                          </button>
+                        </div>
+                        <div id="sig-{{ $signer.UserID }}-{{ $doc.ID }}" class="signature-block mt-1" style="display:none;">
+                          <div class="aurora-glass p-2 mt-1" style="font-family: monospace; font-size: 0.65rem; max-height: 100px; overflow-y: auto; word-break: break-all; background: rgba(10, 25, 47, 0.7);">
+                            {{ $signer.RawSignature }}
+                          </div>
+                        </div>
+                      </li>
+                      {{ end }}
+                    </ul>
+                  </div>
+                {{ end }}
+              </div>
+            {{ end }}
+          </td>
+          <td class="d-flex gap-2 flex-wrap">
+            <a href="/documents/download/{{ $doc.ID }}" class="aurora-btn btn-sm d-flex align-items-center">
+              <i data-lucide="download" class="me-1"></i> View
+            </a>
+            {{ if and (eq $doc.Classification "PUBLIC") (eq $doc.Status "DRAFT") }}
+            <a href="/documents/sign/{{ $doc.ID }}" class="aurora-btn btn-sm d-flex align-items-center">
+              <i data-lucide="check-circle" class="me-1"></i> Sign
+            </a>
+            {{ end }}
+            {{ if eq $doc.Classification "PUBLIC" }}
+            <a href="/documents/edit?id={{ $doc.ID }}&class=CONFIDENTIAL" class="aurora-btn btn-sm d-flex align-items-center">
+              <i data-lucide="lock" class="me-1"></i> Make Confidential
+            </a>
+            {{ else if eq $doc.Classification "CONFIDENTIAL" }}
+            <a href="/documents/edit?id={{ $doc.ID }}&class=PUBLIC" class="aurora-btn btn-sm d-flex align-items-center">
+              <i data-lucide="globe" class="me-1"></i> Make Public
+            </a>
+            {{ end }}
+          </td>
+        </tr>
+        {{ else }}
+        <tr class="no-data-row">
+          <td colspan="6" style="background: rgba(17,34,64,0.4); backdrop-filter: blur(8px); text-align:center;">You have no documents yet.</td>
+        </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .signature-details {
+    max-height: 160px;
+    overflow-y: auto;
+    font-size: 0.85rem;
+  }
+  
+  .aurora-btn {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(100, 255, 218, 0.1);
+    color: var(--aurora-accent);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  
+  .aurora-btn:hover {
+    background: rgba(100, 255, 218, 0.2);
+    color: var(--aurora-accent);
+    border-color: var(--aurora-accent);
+  }
+  
+  .btn-outline-info {
+    color: var(--aurora-highlight);
+    border-color: var(--aurora-highlight);
+  }
+  
+  .btn-outline-info:hover {
+    background-color: rgba(92, 207, 238, 0.15);
+    color: var(--aurora-highlight);
+  }
+  
+  .signature-block {
+    transition: all 0.3s ease;
+  }
+  
+  .signature-block .aurora-glass {
+    border-radius: 6px;
+    border-color: rgba(92, 207, 238, 0.3);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    var ddToggles = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+    ddToggles.forEach(el => new bootstrap.Dropdown(el));
+  
+    document.addEventListener('click', function(event) {
+      const btn = event.target.closest('button.toggle-signature');
+      if (!btn) return;
+      event.preventDefault();
+      event.stopPropagation();
+  
+      const sigId = btn.getAttribute('data-signature-id');
+      const block = document.getElementById(sigId);
+      if (!block) return;
+  
+      document.querySelectorAll('.signature-block').forEach(b => {
+        if (b.id !== sigId) {
+          b.style.display = 'none';
+          const otherBtn = document.querySelector(`[data-signature-id="${b.id}"]`);
+          if (otherBtn) otherBtn.textContent = 'Show Sig';
+        }
+      });
+  
+      if (block.style.display === 'block') {
+        block.style.display = 'none';
+        btn.textContent = 'Show Sig';
+      } else {
+        block.style.display = 'block';
+        btn.textContent = 'Hide Sig';
+      }
+    });
+  });
+</script>
+  
+
+{{ template "layout/footer.html" . }}
+{{ end }}

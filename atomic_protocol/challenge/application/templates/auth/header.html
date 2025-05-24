@@ -1,0 +1,135 @@
+{{ define "auth/header.html" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ .title }} | Atomic Protocol</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --aurora-primary: #0a192f;
+      --aurora-secondary: #112240;
+      --aurora-accent: #64ffda;
+      --aurora-text: #ccd6f6;
+      --aurora-highlight: #5ccfee;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--aurora-primary), var(--aurora-secondary));
+      color: var(--aurora-text);
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, var(--aurora-highlight), transparent);
+      opacity: 0.1;
+      z-index: -1;
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    .aurora-card {
+      background: rgba(17, 34, 64, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(100, 255, 218, 0.15);
+      border-radius: 16px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 0 32px rgba(100, 255, 218, 0.05);
+      min-height: 480px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .aurora-input {
+      background: rgba(10, 25, 47, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(100, 255, 218, 0.2);
+      color: var(--aurora-text);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .aurora-input:focus {
+      background: rgba(10, 25, 47, 0.6);
+      border-color: var(--aurora-accent);
+      color: var(--aurora-text);
+      box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.2);
+    }
+
+    .aurora-input::placeholder {
+      color: white; /* Change placeholder text color to white */
+      opacity: 0.7;
+    }
+
+    .aurora-btn {
+      background: linear-gradient(135deg, var(--aurora-accent), var(--aurora-highlight));
+      color: var(--aurora-primary);
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .aurora-btn:hover {
+      background: linear-gradient(135deg, var(--aurora-highlight), var(--aurora-accent));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(100, 255, 218, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.1; }
+      50% { transform: scale(1.5); opacity: 0.15; }
+    }
+
+    .navbar {
+      background: rgba(10, 25, 47, 0.8) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .navbar-brand {
+      color: var(--aurora-accent) !important;
+    }
+
+    .lucide {
+      stroke: var(--aurora-accent);
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <i data-lucide="atom" class="me-2"></i>
+        Atomic Protocol
+      </a>
+      <div class="d-flex align-items-center">
+        {{ if .user }}
+          <span class="text-light d-flex align-items-center">
+            <i data-lucide="user" class="me-2"></i>
+            {{ .user }}
+          </span>
+        {{ end }}
+      </div>
+    </div>
+  </nav>
+{{ end }}

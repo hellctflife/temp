@@ -1,0 +1,382 @@
+{{ define "auth/login.html" }}
+{{ template "auth/header.html" . }}
+
+{{ block "login-main-content" . }}
+<div class="login-container">
+  <div class="small-note" style="text-align: center; margin-bottom: 1.5rem; color: rgba(204, 214, 246, 0.8); font-size: 0.9rem;">
+    Credentials: "agent[1,2,...,6]: agentpass"
+  </div>
+  {{ if .message }}
+  <div class="alert-wrapper">
+    <div class="aurora-alert {{ if .error }}alert-danger{{ else }}alert-success{{ end }}">
+      <div class="alert-content">
+        <i data-lucide="{{ if .error }}alert-triangle{{ else }}check-circle{{ end }}" class="me-2"></i>
+        {{ .message }}
+      </div>
+    </div>
+  </div>
+  {{ end }}
+  
+  <div class="aurora-login-card">
+    <div class="orbit-decoration orbit-1"></div>
+    <div class="orbit-decoration orbit-2"></div>
+    <div class="orbit-decoration orbit-3"></div>
+    
+    <!-- Username/Password Form -->
+    <div id="password-form">
+      <div class="text-center mb-4">
+        <div class="icon-container">
+          <i data-lucide="lock" style="width: 32px; height: 32px;"></i>
+        </div>
+        <h2 class="welcome-title">Welcome Back</h2>
+        <p class="welcome-subtitle">Please login to your account</p>
+      </div>
+      
+      <form method="POST" action="/login">
+        <div class="mb-4">
+          <label class="form-label d-flex align-items-center">
+            <i data-lucide="user" class="me-2" style="stroke: var(--aurora-highlight);"></i> Username
+          </label>
+          <div class="input-wrapper">
+            <input type="text"
+                   class="aurora-input"
+                   name="username"
+                   required
+                   placeholder="Enter your username">
+          </div>
+        </div>
+        
+        <div class="mb-4">
+          <label class="form-label d-flex align-items-center">
+            <i data-lucide="key" class="me-2" style="stroke: var(--aurora-highlight);"></i> Password
+          </label>
+          <div class="input-wrapper">
+            <input type="password"
+                   class="aurora-input"
+                   name="password"
+                   required
+                   placeholder="Enter your password">
+          </div>
+        </div>
+
+        <button type="submit"
+                class="aurora-btn signin-btn w-100 d-flex align-items-center justify-content-center mb-3">
+          <i data-lucide="log-in" class="me-2"></i> Sign In
+        </button>
+      </form>
+
+      <button id="show-cert-form"
+              class="aurora-btn cert-btn w-100 d-flex align-items-center justify-content-center">
+        <i data-lucide="shield" class="me-2"></i> Authenticate with Certificate
+      </button>
+    </div>
+
+    <!-- Certificate Upload Form -->
+    <div id="cert-form" style="display:none;">
+      <div class="text-center mb-4">
+        <div class="icon-container">
+          <i data-lucide="file-text" style="width: 32px; height: 32px;"></i>
+        </div>
+        <h2 class="welcome-title">Certificate Auth</h2>
+        <p class="welcome-subtitle">Upload your certificate file</p>
+      </div>
+
+      <form method="POST" action="/login" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label class="form-label d-flex align-items-center">
+            <i data-lucide="file" class="me-2" style="stroke: var(--aurora-highlight);"></i> Certificate (.pem)
+          </label>
+          <div class="file-upload-wrapper">
+            <input type="file"
+                   class="aurora-input file-input"
+                   name="certificate"
+                   accept=".pem,application/x-pem-file"
+                   required>
+          </div>
+        </div>
+
+        <button type="submit"
+                class="aurora-btn signin-btn w-100 d-flex align-items-center justify-content-center mb-3">
+          <i data-lucide="upload-cloud" class="me-2"></i> Submit Certificate
+        </button>
+      </form>
+
+      <button id="show-password-form"
+              class="aurora-btn back-btn w-100 d-flex align-items-center justify-content-center">
+        <i data-lucide="chevron-left" class="me-2"></i> Back to Password Login
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: 80vh;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .alert-wrapper {
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .aurora-alert {
+    background: rgba(17, 34, 64, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1rem;
+    border-left: 4px solid;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .aurora-alert.alert-danger {
+    border-color: #ff6b81;
+  }
+  
+  .aurora-alert.alert-success {
+    border-color: var(--aurora-accent);
+  }
+  
+  .alert-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .aurora-login-card {
+    background: rgba(17, 34, 64, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 24px;
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.3),
+      inset 0 0 40px rgba(92, 207, 238, 0.1);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .aurora-login-card:hover {
+    border-color: rgba(100, 255, 218, 0.5);
+    box-shadow: 
+      0 15px 30px rgba(0, 0, 0, 0.4),
+      inset 0 0 50px rgba(92, 207, 238, 0.15);
+    transform: translateY(-5px);
+  }
+  
+  .orbit-decoration {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    pointer-events: none;
+  }
+  
+  .orbit-1 {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    right: -150px;
+  }
+  
+  .orbit-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -100px;
+    left: -100px;
+  }
+  
+  .orbit-3 {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    right: -75px;
+    transform: translateY(-50%);
+  }
+  
+  .icon-container {
+    width: 70px;
+    height: 70px;
+    background: rgba(100, 255, 218, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+  }
+  
+  .icon-container i {
+    stroke: var(--aurora-accent);
+  }
+  
+  .welcome-title {
+    color: var(--aurora-text);
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .welcome-subtitle {
+    color: rgba(204, 214, 246, 0.7);
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-wrapper {
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  
+  .aurora-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(17, 34, 64, 0.4);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 12px;
+    color: var(--aurora-text);
+    transition: all 0.3s ease;
+  }
+  
+  .aurora-input:focus {
+    outline: none;
+    border-color: var(--aurora-accent);
+    box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
+    background: rgba(17, 34, 64, 0.6);
+  }
+  
+  .aurora-input::placeholder {
+    color: rgba(204, 214, 246, 0.5);
+  }
+  
+  .file-upload-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .file-input {
+    color: rgba(204, 214, 246, 0.9);
+  }
+  
+  input[type="file"]::file-selector-button {
+    background-color: rgba(100, 255, 218, 0.1);
+    color: var(--aurora-accent);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 8px;
+    padding: 0.375rem 0.75rem;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  input[type="file"]::file-selector-button:hover {
+    background-color: rgba(100, 255, 218, 0.2);
+    border-color: var(--aurora-accent);
+  }
+  
+  .aurora-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: rgba(100, 255, 218, 0.1);
+    color: var(--aurora-accent);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .aurora-btn:hover {
+    background: rgba(100, 255, 218, 0.2);
+    color: var(--aurora-accent);
+    border-color: var(--aurora-accent);
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .signin-btn {
+    background: linear-gradient(45deg, rgba(100, 255, 218, 0.2), rgba(92, 207, 238, 0.2));
+  }
+  
+  .signin-btn:hover {
+    background: linear-gradient(45deg, rgba(100, 255, 218, 0.3), rgba(92, 207, 238, 0.3));
+  }
+  
+  .cert-btn {
+    background: rgba(17, 34, 64, 0.6);
+  }
+  
+  .back-btn {
+    background: rgba(17, 34, 64, 0.6);
+  }
+  
+  .form-label {
+    color: var(--aurora-text);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+</style>
+
+<!-- Toggle script -->
+<script>
+document.getElementById('show-cert-form').addEventListener('click', function() {
+  const passwordForm = document.getElementById('password-form');
+  const certForm = document.getElementById('cert-form');
+  
+  passwordForm.style.opacity = '0';
+  passwordForm.style.transform = 'translateX(-20px)';
+  
+  setTimeout(function() {
+    passwordForm.style.display = 'none';
+    certForm.style.display = 'block';
+    certForm.style.opacity = '0';
+    certForm.style.transform = 'translateX(20px)';
+    
+    setTimeout(function() {
+      certForm.style.opacity = '1';
+      certForm.style.transform = 'translateX(0)';
+    }, 50);
+  }, 300);
+});
+
+document.getElementById('show-password-form').addEventListener('click', function() {
+  const passwordForm = document.getElementById('password-form');
+  const certForm = document.getElementById('cert-form');
+  
+  certForm.style.opacity = '0';
+  certForm.style.transform = 'translateX(20px)';
+  
+  setTimeout(function() {
+    certForm.style.display = 'none';
+    passwordForm.style.display = 'block';
+    passwordForm.style.opacity = '0';
+    passwordForm.style.transform = 'translateX(-20px)';
+    
+    setTimeout(function() {
+      passwordForm.style.opacity = '1';
+      passwordForm.style.transform = 'translateX(0)';
+    }, 50);
+  }, 300);
+});
+
+// Add transition style once the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  const passwordForm = document.getElementById('password-form');
+  const certForm = document.getElementById('cert-form');
+  
+  passwordForm.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+  certForm.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+});
+</script>
+{{ end }}
+
+{{ template "auth/footer.html" }}
+{{ end }}
